@@ -1,4 +1,4 @@
-# Experimento 01 — Automação de monitoramento de CrashLoopBackOff no Kubernetes
+# Experimento 02 — Automação de monitoramento de CrashLoopBackOff no Kubernetes
 
 **Data:** 2026-05-08
 **Ferramenta usada:** Claude
