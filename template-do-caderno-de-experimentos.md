@@ -23,6 +23,10 @@ chaves, segredos nem nomes internos da empresa. Anonimize se necessário.
 [resumo do que a IA respondeu. Se a resposta for longa, guarde um trecho e
 um link para a conversa, se a plataforma permitir]
 
+## Output completo da IA
+
+[output completo retornado pela IA, sem edição]
+
 ## O que funcionou
 
 - [o que a IA acertou de primeira]
