@@ -115,16 +115,18 @@ Antes de criar, mostre na tela e peça aprovação
 Você é um especialista gitops com amplo conhecimento em IA Claude Code
 
 # Contexto
-Github com o repositório "AIOps-GenAI-Cotidiano-Tecnico", pasta "framework-C-A-R-E" e dentro todos os aquivos abaixo inclusive com o README.md:
+Repositório no Github com o nome "AIOps-GenAI-Cotidiano-Tecnico", na pasta "módulo 2 engenharia de prompt e contexto", pasta "técnicas avançadas prompt enginnering", Readme.md e vs code
 
-Nomes para usar:
+Arquivos:
 
-Prompt 1 — Feedback de desempenho SEM Example
-Prompt 2 — Feedback de desempenho COM Example (C-A-R-E completo)
-Prompt 3 — Terraform module com padrões da empresa (C-A-R-E completo)
+prompt-chaining-diagramas.md
+least-to-most.md
+chain-of-verification.md
+self-refine.md
+react.md
 
 # Instrução
-Execute os prompts de cada cenário do arquivo readme.md dentro da pasta "framework-C-A-R-E", um de cada vez, aguarde retornar o output de cada prompt e com o resultado, utilize o arquivo "template-do-caderno-de-experimentos.md" para registrar o markdown usando-o como modelo padrão. Inclua o arquivo markdown dentro de cada arquivo relaciondo no # Contexto
+Execute os prompts de cada cenário do arquivo readme.md dentro da pasta "técnicas avançadas prompt enginnering", um de cada vez, aguarde retornar o output de cada prompt e com o resultado, observe que algumas sequencias de prompt aguarda o output anterior para poder seguir. Utilize o arquivo "template-do-caderno-de-experimentos.md" para registrar o markdown usando-o como modelo padrão. Inclua o arquivo markdown dentro de cada arquivo relaciondo no # Contexto
 
 # Output
 retorne na tela cada arquivo criado em markdown solicitando aprovação
@@ -137,28 +139,26 @@ retorne na tela cada arquivo criado em markdown solicitando aprovação
 Você é um especialista gitops
 
 # Contexto
-Repositório no Github com o nome "AIOps-GenAI-Cotidiano-Tecnico", usando vs code.
+Repositório no Github com o nome "AIOps-GenAI-Cotidiano-Tecnico", na pasta "módulo 2 engenharia de prompt e contexto", pasta "técnicas avançadas prompt enginnering" e vs code
 
 # Instrução
-Crie o arquivo "engenharia-de-prompt-C-A-R-E.md" com o exemplo de prompt abaixo e insira na raiz do projeto "AIOps-GenAI-Cotidiano-Tecnico":
+Na pasta "técnicas avançadas prompt enginnering" crie os arquivos com os nomes abaixo, deixando-os padronizados .md diretamente no vs code.
 
-Quando utilizar o Framework C-A-R-E (Context-After-Result-Example)
+Passo 1:
 
-O framework C-A-R-E deve ser utilizado quando você possui um exemplo de referência claro para guiar a IA, como em feedbacks estruturados, módulos de infraestrutura (Terraform) ou revisões de código baseadas em padrões internos. Evite-o em tarefas de resposta curta, brainstorms criativos ou quando não houver um modelo, pois o esforço do prompt não justifica o resultado nessas situações.
+Nomes para usar:
 
-```
-# Context
-[Espaço para texto]
+prompt 1 - prompt-chaining-diagramas.md
+prompt 2 - least-to-most.md
+prompt 3 - chain-of-verification.md
+prompt 4 - self-refine.md
+prompt 5 - react.md
 
-# Action
-[Espaço para texto]
+Passo 2:
 
-# Result
-[Espaço para texto]
+Após criar os arquivos, crie um documento Readme.md dentro da pasta "técnicas avançadas prompt enginnering" com todo o conteúdo abaixo e observando cada nome usado e encontrado abaixo, de também no Readme de cada tipo de prompt uma breve explicação de quando cada um pode ser usado
 
-# Example
-[Espaço para texto]
-
-```
-# output
-Finalize com o formato markdown
+# Output
+ Documento deverá ser em formato Markdown
+ 
+ **Inclua todo o contúedo aqui**
