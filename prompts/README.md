@@ -27,6 +27,7 @@ _Nenhum prompt cadastrado ainda._
 Pipelines de CI/CD, containers, orquestração, infraestrutura como código, observabilidade, SRE e segurança operacional.
 
 - [auditar-dockerfile-python](./sre/auditar-dockerfile-python/) — Audita um Dockerfile de aplicação Python e entrega recomendações priorizadas de segurança e performance com correções prontas para colar.
+- [replicar-bucket-s3-cross-account](./sre/replicar-bucket-s3-cross-account/) — Gera passo a passo via AWS Console para replicar um bucket S3 entre contas com acesso restrito ao consumidor e hardening de segurança nos dois buckets.
 
 ### [Finanças](./finops/)
 
