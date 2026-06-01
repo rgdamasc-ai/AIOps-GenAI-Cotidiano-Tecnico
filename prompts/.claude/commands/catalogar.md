@@ -107,9 +107,6 @@ Montar resposta ao usuário contendo, exatamente, nesta ordem:
    ferramenta usada: [...]
    modelo: [...]
    tags: [...]
-   inputs:
-     - nome: ...
-       descricao: ...
    ```
    Usar tags inline `[a, b, c]` quando houver até 5; expandir em uma por linha quando houver 6+.
 4. **Preview do `prompt.md`**: mostrar o frontmatter + as primeiras 3 a 5 linhas do texto do prompt exatamente como recebido (para o usuário confirmar que a integridade está preservada).
@@ -138,7 +135,7 @@ Criar o diretório `<categoria>/<slug>/`.
 
 Conteúdo, nesta ordem:
 
-1. Bloco de frontmatter YAML entre `---` delimitadores, com os campos `nome`, `descricao`, `versao`, `tags`, `inputs` (idêntico ao apresentado no plano).
+1. Bloco de frontmatter YAML entre `---` delimitadores, com os campos `nome`, `descricao`, `versao`, `tags`(idêntico ao apresentado no plano).
 2. Linha em branco.
 3. **Texto do prompt exatamente como recebido em `$ARGUMENTS`** — sem remover espaços, sem reformatar, sem adicionar cabeçalho, sem remover quebras de linha.
 

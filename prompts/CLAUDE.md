@@ -49,11 +49,6 @@ versao: 1.0.0
 ferramenta usada: [...]
 modelo: [...]
 tags: [tag1, tag2]
-inputs:
-  - nome: variavel_um
-    descricao: O que essa variável representa
-  - nome: variavel_dois
-    descricao: O que essa variável representa
 ---
 ```
 
