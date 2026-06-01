@@ -22,3 +22,4 @@ Entram aqui prompts relacionados a:
 ## Prompts
 
 - [auditar-dockerfile-python](./auditar-dockerfile-python/) — Audita um Dockerfile de aplicação Python e entrega recomendações priorizadas de segurança e performance com correções prontas para colar.
+- [replicar-bucket-s3-cross-account](./replicar-bucket-s3-cross-account/) — Gera passo a passo via AWS Console para replicar um bucket S3 entre contas com acesso restrito ao consumidor e hardening de segurança nos dois buckets.
