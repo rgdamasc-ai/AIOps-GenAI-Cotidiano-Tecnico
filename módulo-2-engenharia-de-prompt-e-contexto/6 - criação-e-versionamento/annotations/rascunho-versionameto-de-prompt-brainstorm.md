@@ -57,5 +57,5 @@ prompts/
 
 Como reusar entre projetos
 
-![Eixo 2](../.images/Eixo2.png)
-![Git](../.images/git.png)
+![Eixo 2](./.images/Eixo2.png)
+![Git](./.images/git.png)
