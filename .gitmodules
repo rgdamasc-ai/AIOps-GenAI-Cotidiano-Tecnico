@@ -1,0 +1,3 @@
+[submodule "módulo-2-engenharia-de-prompt-e-contexto/7 - prompt-registry"]
+	path = módulo-2-engenharia-de-prompt-e-contexto/7 - prompt-registry
+	url = git@github.com:fabricioveronez/prompt-registry.git
