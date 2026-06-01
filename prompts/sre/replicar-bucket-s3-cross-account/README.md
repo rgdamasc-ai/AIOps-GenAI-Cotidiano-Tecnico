@@ -5,31 +5,6 @@ versao: 1.0.0
 ferramenta usada: Claude
 modelo: Opus 4.8
 tags: [aws, s3, replicação, segurança, sre]
-inputs:
-  - nome: bucket_origem
-    descricao: Nome do bucket de origem na conta A
-  - nome: conta_a_id
-    descricao: ID numérico da conta AWS de origem
-  - nome: bucket_destino
-    descricao: Nome do bucket de destino na conta B
-  - nome: conta_b_id
-    descricao: ID numérico da conta AWS de destino
-  - nome: regiao_origem
-    descricao: Região AWS do bucket de origem
-  - nome: regiao_destino
-    descricao: Região AWS do bucket de destino
-  - nome: servico_consumidor
-    descricao: Serviço/role consumidora em B (ex.: ECS task role, Lambda execution role)
-  - nome: kms_key_origem_arn
-    descricao: ARN da CMK (KMS) usada para criptografia na conta de origem
-  - nome: kms_key_destino_arn
-    descricao: ARN da CMK (KMS) usada para criptografia na conta de destino
-  - nome: replication_role_name
-    descricao: Nome da IAM Role de replicação criada na conta A (padrão s3-replication-{{bucket_origem}}-role)
-  - nome: consumer_role_name
-    descricao: Nome da IAM Role assumida pelo serviço consumidor em B
-  - nome: prefixo_dados
-    descricao: Prefixo opcional de objetos a replicar (vazio replica tudo)
 ---
 
 # Replicação Segura de Bucket S3 Cross-Account
