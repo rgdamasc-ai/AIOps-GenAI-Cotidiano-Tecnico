@@ -20,7 +20,7 @@ Use o slash command [`/catalogar`](./.claude/commands/catalogar.md) passando o t
 
 Escrita, revisão e refatoração de código, design de APIs e arquitetura, debugging, testes e documentação técnica.
 
-_Nenhum prompt cadastrado ainda._
+- [gerar-config-promptfoo](./desenvolvimento/gerar-config-promptfoo/) — Gera um arquivo promptfooconfig.yaml completo para validar qualquer prompt, traduzindo critérios em linguagem natural para asserts do promptfoo (Gemini ou Anthropic).
 
 ### [SRE](./sre/)
 

@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+# Learn more about building a configuration: https://promptfoo.dev/docs/configuration/guide
+
+description: "Auditoria de Dockerfile SRE utilizando Gemini 2.5 Flash"
+
+prompts:
+  - file://prompts/sre/auditar-dockerfile-python/prompt.md
+
+providers:
+  - id: google:gemini-2.5-flash
+    config:
+      temperature: 0.0
+
+tests:
+  - vars:
+      stack: "Node.js 24"
+    assert:
+      - type: regex
+        value: "(^|\\n)FROM\\s+\\S+:\\S+"
+      - type: not-regex
+        value: "(^|\\n)FROM\\s+\\S+:latest\\b"
+      - type: regex
+        value: "(^|\\n)USER\\s+\\S+"
+      - type: latency
+        threshold: 15000      # 15 segundos
+
+  - vars:
+      stack: "Python 3.10 com FAST API"
+    assert:
+      - type: regex
+        value: "(^|\\n)FROM\\s+\\S+:\\S+"
+      - type: not-regex
+        value: "(^|\\n)FROM\\s+\\S+:latest\\b"
+      - type: regex
+        value: "(^|\\n)USER\\s+\\S+"
+      - type: latency
+        threshold: 15000
+
+  - vars:
+      stack: "Go 1.22"
+    assert:
+      - type: regex
+        value: "(^|\\n)FROM\\s+\\S+:\\S+"
+      - type: not-regex
+        value: "(^|\\n)FROM\\s+\\S+:latest\\b"
+      - type: regex
+        value: "(^|\\n)USER\\s+\\S+"
+      - type: latency
+        threshold: 15000  

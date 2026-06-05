@@ -20,4 +20,4 @@ Entram aqui prompts relacionados a:
 
 ## Prompts
 
-_Nenhum prompt cadastrado ainda._
+- [gerar-config-promptfoo](./gerar-config-promptfoo/) — Gera um arquivo promptfooconfig.yaml completo para validar qualquer prompt, traduzindo critérios em linguagem natural para asserts do promptfoo (Gemini ou Anthropic).
