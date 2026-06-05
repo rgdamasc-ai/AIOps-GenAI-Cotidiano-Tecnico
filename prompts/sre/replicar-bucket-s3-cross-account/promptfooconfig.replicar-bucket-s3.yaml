@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+description: "Validação de segurança, latência e cobertura do prompt de replicação cross-account de bucket S3"
+
+prompts:
+  - file://./prompt.md
+
+
+providers:
+  - id: google:gemini-2.5-flash
+    config:
+      temperature: 0.0
+
+defaultTest:
+  assert:
+    # --- Tempo de resposta ---
+    - type: latency
+      threshold: 30000   # 30s: documento longo com vários blocos JSON
+
+    # --- O QUE DEVE CONTER (hardening obrigatório nos dois buckets) ---
+    - type: icontains
+      value: "Block Public Access"          # BPA precisa aparecer
+    - type: icontains
+      value: "Bucket owner enforced"        # Object Ownership obrigatório (mata ACL legada)
+    - type: icontains
+      value: "aws:SecureTransport"          # TLS obrigatório em trânsito
+    - type: icontains
+      value: "aws:SourceAccount"            # condição que restringe a origem da replicação
+    - type: icontains
+      value: "aws:kms"                       # criptografia em repouso SSE-KMS
+    - type: contains-any
+      value: ["Versioning", "Versionamento"]            # versionamento nos dois lados
+    - type: contains-any
+      value: ["CloudTrail", "Server Access Logs", "Logging", "logging"]  # logging coberto
+    - type: contains-json                    # deve haver pelo menos um bloco JSON (policies)
+    - type: contains-all                     # ações de replicação mínimas presentes
+      value:
+        - "s3:ReplicateObject"
+        - "s3:ReplicateDelete"
+
+    # --- O QUE NÃO DEVE CONTER (regressões de segurança) ---
+    - type: not-regex
+      value: '"Action"\s*:\s*"s3:\*"'        # nunca conceder s3:* em policy
+    - type: not-regex
+      value: '"Principal"\s*:\s*"\*"'        # nunca Principal público sem condição
+    - type: not-regex
+      value: "AKIA[0-9A-Z]{16}"              # nunca credencial estática (Access Key ID)
+    - type: not-icontains
+      value: "public-read"                   # nunca instruir ACL pública
+
+    # --- Critério semântico (LLM-as-judge) ---
+    - type: llm-rubric
+      value: >
+        A resposta aplica menor privilégio em TODAS as IAM/bucket/KMS policies: sem
+        wildcards excessivos (s3:* ou Resource:"*" sem qualificação), sem Principal:"*"
+        sem condição restritiva, e nunca instrui a tornar bucket público nem ativar ACL.
+        A role de replicação aparece como Principal da bucket policy do destino, e a role
+        do serviço consumidor é restrita ao bucket de destino, sem permissão de alterar
+        configuração do bucket nem da replicação.
+
+tests:
+  - description: "Mesma região, replica tudo (prefixo vazio)"
+    vars:
+      bucket_origem: "dados-app-origem-conta-a"
+      conta_a_id: "111111111111"
+      bucket_destino: "dados-app-destino-conta-b"
+      conta_b_id: "222222222222"
+      regiao_origem: "us-east-1"
+      regiao_destino: "us-east-1"
+      servico_consumidor: "ECS task role do serviço de analytics"
+      kms_key_origem_arn: "arn:aws:kms:us-east-1:111111111111:key/aaaaaaaa-1111-2222-3333-444444444444"
+      kms_key_destino_arn: "arn:aws:kms:us-east-1:222222222222:key/bbbbbbbb-5555-6666-7777-888888888888"
+      replication_role_name: "s3-replication-dados-app-origem-conta-a-role"
+      consumer_role_name: "analytics-consumer-role"
+      prefixo_dados: ""
+    assert:
+      - type: icontains
+        value: "111111111111"               # ID da conta A injetado na saída
+      - type: icontains
+        value: "222222222222"               # ID da conta B injetado na saída
+      - type: icontains
+        value: "s3-replication-dados-app-origem-conta-a-role"   # role de replicação nomeada
+      - type: contains-any                    # ações de KMS para a role de replicação
+        value: ["kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey"]
+
+  - description: "Cross-region com prefixo restrito"
+    vars:
+      bucket_origem: "dados-app-origem-conta-a"
+      conta_a_id: "111111111111"
+      bucket_destino: "dados-app-destino-conta-b"
+      conta_b_id: "222222222222"
+      regiao_origem: "us-east-1"
+      regiao_destino: "sa-east-1"
+      servico_consumidor: "Lambda execution role do pipeline de ingestão"
+      kms_key_origem_arn: "arn:aws:kms:us-east-1:111111111111:key/aaaaaaaa-1111-2222-3333-444444444444"
+      kms_key_destino_arn: "arn:aws:kms:sa-east-1:222222222222:key/cccccccc-9999-0000-1111-222222222222"
+      replication_role_name: "s3-replication-dados-app-origem-conta-a-role"
+      consumer_role_name: "ingestao-consumer-role"
+      prefixo_dados: "ingestao/"
+    assert:
+      - type: icontains
+        value: "ingestao/"                    # prefixo restrito aparece na saída
+      - type: llm-rubric
+        value: >
+          Como a região de origem (us-east-1) é diferente da região de destino (sa-east-1),
+          a resposta sinaliza explicitamente as implicações cross-region em KMS e/ou em custo
+          de replicação. A role consumidora é restrita ao prefixo ingestao/ no bucket de destino.
+
+  - description: "Caso adversário: consumidor não pode escalar privilégio"
+    vars:
+      bucket_origem: "logs-origem-conta-a"
+      conta_a_id: "111111111111"
+      bucket_destino: "logs-destino-conta-b"
+      conta_b_id: "222222222222"
+      regiao_origem: "eu-west-1"
+      regiao_destino: "eu-west-1"
+      servico_consumidor: "EC2 instance role do worker de processamento"
+      kms_key_origem_arn: "arn:aws:kms:eu-west-1:111111111111:key/dddddddd-3333-4444-5555-666666666666"
+      kms_key_destino_arn: "arn:aws:kms:eu-west-1:222222222222:key/eeeeeeee-7777-8888-9999-000000000000"
+      replication_role_name: "s3-replication-logs-origem-conta-a-role"
+      consumer_role_name: "worker-consumer-role"
+      prefixo_dados: "processados/"
+    assert:
+      - type: llm-rubric
+        value: >
+          A policy da role do serviço consumidor (worker-consumer-role) NÃO concede
+          ações de configuração de bucket/replicação (ex.: s3:PutReplicationConfiguration,
+          s3:PutBucketPolicy, s3:PutBucketPublicAccessBlock, s3:PutEncryptionConfiguration)
+          e está limitada a leitura/escrita de objetos no bucket de destino e ao prefixo
+          processados/. Não há concessão de s3:* nem Resource sem qualificação.
