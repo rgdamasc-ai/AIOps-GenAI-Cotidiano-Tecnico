@@ -23,3 +23,4 @@ Entram aqui prompts relacionados a:
 
 - [auditar-dockerfile-python](./auditar-dockerfile-python/) — Audita um Dockerfile de aplicação Python e entrega recomendações priorizadas de segurança e performance com correções prontas para colar.
 - [replicar-bucket-s3-cross-account](./replicar-bucket-s3-cross-account/) — Gera passo a passo via AWS Console para replicar um bucket S3 entre contas com acesso restrito ao consumidor e hardening de segurança nos dois buckets.
+- [diagnosticar-erros-eks](./diagnosticar-erros-eks/) — Diagnostica erros de workloads em um namespace/serviço do Amazon EKS, aponta a causa raiz com evidências e sugere a correção assertiva sem aplicá-la.
