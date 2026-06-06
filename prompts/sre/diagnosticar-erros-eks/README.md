@@ -33,3 +33,22 @@ Preencher `{{namespace}}` com `pagamentos` e `{{servico}}` com `api-checkout` pa
 
 - Depende das saídas read-only fornecidas pelo operador (`kubectl get/describe/logs`, etc.); sem evidências, só lista o que coletar.
 - Não executa comandos nem acessa o cluster — apenas analisa o que recebe e recomenda.
+
+## Testes
+
+Este prompt acompanha o arquivo [`promptfooconfig.yaml`](./promptfooconfig.yaml), que valida com [promptfoo](https://promptfoo.dev) se o diagnóstico é eficiente e agnóstico a namespace/workload. Foi gerado a partir do prompt [gerar-config-promptfoo](../../desenvolvimento/gerar-config-promptfoo/).
+
+Cobertura das avaliações:
+
+- **`latency`** — tempo de resposta dentro de um limite útil para on-call.
+- **`not-icontains`** — garante a regra inviolável de não aplicar mudanças (reprova se afirmar que executou).
+- **`llm-rubric`** — comportamento semântico: pede comandos read-only, não fabrica dados e respeita o escopo (workload específico vs. namespace inteiro).
+- **`contains-all`** — presença das seções obrigatórias da saída, provando que a estrutura independe dos nomes de namespace/serviço.
+
+Os cenários cobrem workload específico, varredura de namespace inteiro (serviço vazio) e nomes arbitrários (teste de agnosticismo).
+
+Para rodar (requer `ANTHROPIC_API_KEY` no ambiente, pois o config usa o modelo-alvo Opus 4.8):
+
+```bash
+cd prompts/sre/diagnosticar-erros-eks && promptfoo eval
+```

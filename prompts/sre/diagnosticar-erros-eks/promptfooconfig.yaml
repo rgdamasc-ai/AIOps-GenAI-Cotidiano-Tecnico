@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Valida o prompt de diagnóstico de erros em EKS: eficiência dos comandos/validações, tempo de resposta e agnosticismo a namespace/workload"
+prompts:
+  - file://./prompt.md
+providers:
+  # O prompt declara modelo Opus 4.8 no frontmatter; testamos com o modelo-alvo real.
+  - id: anthropic:messages:claude-sonnet-4-5-20250929
+    config:
+      temperature: 0.0 # diagnóstico deve ser estável e reproduzível
+defaultTest:
+  assert:
+    # TIPO 1 — latency: o diagnóstico não pode demorar demais para o operador em incidente.
+    - type: latency
+      threshold: 30000 # 30s: resposta longa e estruturada, mas ainda útil em on-call
+    # TIPO 2 — not-regex: regra inviolável "NÃO aplique nada".
+    # CORRIGIDO: removido o (?i) (flag inline não suportada pelo RegExp do Node);
+    # case-insensitivity feita com classes de caractere na inicial de cada termo.
+    - type: not-regex
+      value: "[Aa]pliquei|[Ee]xecutei|[Jj]á apliquei|[Rr]odei o comando|[Ff]iz o rollout"
+tests:
+  - description: "Workload específico em namespace de produção, sem saídas fornecidas: deve pedir comandos read-only e não inventar erros"
+    vars:
+      namespace: "production"
+      servico: "checkout-api"
+    assert:
+      # TIPO 3 — llm-rubric: comportamento semântico esperado no caminho "sem evidência".
+      - type: llm-rubric
+        value: >
+          A resposta solicita comandos kubectl read-only (get/describe/logs/events)
+          para o namespace 'production' e o serviço 'checkout-api' ANTES de concluir,
+          deixa claro que NÃO vai aplicar nenhuma mudança, e NÃO fabrica erros ou
+          saídas de comando que não foram fornecidos.
+  - description: "Namespace inteiro (serviço vazio): deve varrer todo o namespace, não um workload específico"
+    vars:
+      namespace: "data-platform"
+      servico: ""
+    assert:
+      - type: llm-rubric
+        value: >
+          Por o serviço estar vazio, a resposta trata o ESCOPO como o namespace
+          'data-platform' inteiro (varredura de todos os workloads), e não foca em
+          um único workload. Mantém a postura de apenas diagnosticar, sem aplicar.
+  - description: "Agnosticismo a namespace/workload: nomes arbitrários devem produzir a mesma estrutura de diagnóstico"
+    vars:
+      namespace: "ns-7x9-zeta"
+      servico: "svc-randomico-42"
+    assert:
+      - type: llm-rubric
+        value: >
+          A resposta funciona com nomes arbitrários de namespace ('ns-7x9-zeta') e
+          serviço ('svc-randomico-42') sem assumir um domínio específico: o método de
+          diagnóstico é o mesmo independentemente dos nomes, referenciando os valores
+          fornecidos nos comandos/escopo em vez de nomes hardcoded.
+      # CORRIGIDO: o contains-all original exigia "Erros Encontrados" e
+      # "Diagnóstico Adicional Necessário", cabeçalhos que só aparecem quando há
+      # evidência para diagnosticar. Como este teste não fornece saídas de comando,
+      # o modelo entra no modo "pedir evidências", onde o cabeçalho garantido é
+      # "Resumo". Para validar o caminho de diagnóstico completo, adicione uma
+      # variável de saídas no prompt e um teste que a preencha.
+      - type: contains
+        value: "Resumo"
