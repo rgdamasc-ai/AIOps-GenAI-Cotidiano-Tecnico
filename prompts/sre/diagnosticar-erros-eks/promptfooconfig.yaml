@@ -3,7 +3,7 @@ description: "Valida o prompt de diagnóstico de erros em EKS: eficiência dos c
 prompts:
   - file://./prompt.md
 providers:
-  # O prompt declara modelo Opus 4.8 no frontmatter; testamos com o modelo-alvo real.
+  # O prompt declara Opus 4.8 no frontmatter; aqui testamos com Sonnet 4.5 (mais barato/rápido para a suíte de validação).
   - id: anthropic:messages:claude-sonnet-4-5-20250929
     config:
       temperature: 0.0 # diagnóstico deve ser estável e reproduzível
