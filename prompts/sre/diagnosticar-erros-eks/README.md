@@ -38,17 +38,21 @@ Preencher `{{namespace}}` com `pagamentos` e `{{servico}}` com `api-checkout` pa
 
 Este prompt acompanha o arquivo [`promptfooconfig.yaml`](./promptfooconfig.yaml), que valida com [promptfoo](https://promptfoo.dev) se o diagnóstico é eficiente e agnóstico a namespace/workload. Foi gerado a partir do prompt [gerar-config-promptfoo](../../desenvolvimento/gerar-config-promptfoo/).
 
+**Provider:** `anthropic:messages:claude-sonnet-4-5-20250929` com `temperature: 0.0` (diagnóstico estável e reproduzível).
+
 Cobertura das avaliações:
 
-- **`latency`** — tempo de resposta dentro de um limite útil para on-call.
-- **`not-icontains`** — garante a regra inviolável de não aplicar mudanças (reprova se afirmar que executou).
-- **`llm-rubric`** — comportamento semântico: pede comandos read-only, não fabrica dados e respeita o escopo (workload específico vs. namespace inteiro).
-- **`contains-all`** — presença das seções obrigatórias da saída, provando que a estrutura independe dos nomes de namespace/serviço.
+- **`latency`** (`defaultTest`, `threshold: 30000`) — tempo de resposta dentro de um limite útil para on-call (≤ 30s).
+- **`not-regex`** (`defaultTest`) — garante a regra inviolável de não aplicar mudanças: reprova se a saída afirmar que executou (`apliquei`, `executei`, `já apliquei`, `rodei o comando`, `fiz o rollout`). Usa classes de caractere na inicial em vez da flag inline `(?i)`, não suportada pelo RegExp do Node.
+- **`llm-rubric`** (por teste) — comportamento semântico: pede comandos read-only, não fabrica dados e respeita o escopo (workload específico vs. namespace inteiro vs. nomes arbitrários).
+- **`contains`** (3º teste, valor `"Resumo"`) — presença do cabeçalho garantido da saída no caminho "sem evidência".
 
-Os cenários cobrem workload específico, varredura de namespace inteiro (serviço vazio) e nomes arbitrários (teste de agnosticismo).
+Os cenários cobrem workload específico (`production/checkout-api`), varredura de namespace inteiro com serviço vazio (`data-platform`) e nomes arbitrários (`ns-7x9-zeta`/`svc-randomico-42`, teste de agnosticismo).
 
-Para rodar (requer `ANTHROPIC_API_KEY` no ambiente, pois o config usa o modelo-alvo Opus 4.8):
+Para rodar (requer `ANTHROPIC_API_KEY` no ambiente):
 
 ```bash
 cd prompts/sre/diagnosticar-erros-eks && promptfoo eval
 ```
+
+> **Nota sobre cobertura:** como os testes não fornecem saídas de comando, o modelo entra no modo "pedir evidências", em que o único cabeçalho garantido é `Resumo` — por isso a asserção valida só ele, e não as seções `Erros Encontrados` / `Diagnóstico Adicional Necessário`. Para exercitar o caminho de diagnóstico completo, adicione uma variável de saídas de comando ao prompt e um teste que a preencha.
